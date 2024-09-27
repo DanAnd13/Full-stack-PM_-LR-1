@@ -51,10 +51,16 @@ namespace AgifyApiDemo
                 {
                     CreateTable();
                 }
+                if (response.Age > 0)
+                {
+                    SaveDataToDatabase(response.Name, response.Age, response.Count);
 
-                SaveDataToDatabase(response.Name, response.Age, response.Count);
-
-                GetAndPrintDataFromDatabase(response.Name);
+                    GetAndPrintDataFromDatabase(response.Name);
+                }
+                else
+                {
+                    Console.WriteLine("Age can`t be lower then 0");
+                }
             }
             catch (HttpRequestException)
             {
@@ -89,8 +95,7 @@ namespace AgifyApiDemo
                 _connection.Open();
 
                 string createTableQuery = @"CREATE TABLE IF NOT EXISTS ResponseResults (
-                                            Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                            Name TEXT,
+                                            Name TEXT PRIMARY KEY,
                                             Age INTEGER,
                                             Count INTEGER)";
                 SQLiteCommand command = new SQLiteCommand(createTableQuery, _connection);
@@ -124,7 +129,7 @@ namespace AgifyApiDemo
             {
                 _connection.Open();
 
-                string selectQuery = "SELECT Name, Age, Count FROM ResponseResults WHERE Name = @Name LIMIT 1";
+                string selectQuery = "SELECT* FROM ResponseResults WHERE Name = @Name";
                 SQLiteCommand command = new SQLiteCommand(selectQuery, _connection);
                 command.Parameters.AddWithValue("@Name", Name);
 
