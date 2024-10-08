@@ -1,0 +1,19 @@
+# Використовуємо офіційний образ для .NET Core SDK (для компіляції додатку)
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /app
+
+# Копіюємо проектний файл і відновлюємо залежності
+COPY *.csproj ./
+RUN dotnet restore
+
+# Копіюємо всі файли і будуємо додаток
+COPY . ./
+RUN dotnet publish -c Release -o out
+
+# Використовуємо мінімальний runtime-образ для запуску додатка
+FROM mcr.microsoft.com/dotnet/runtime:7.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/out .
+
+# Команда для запуску додатку
+ENTRYPOINT ["dotnet", "Danulov_LR-1.dll"]

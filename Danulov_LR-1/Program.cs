@@ -46,11 +46,9 @@ namespace AgifyApiDemo
             try
             {
                 var response = await GetApiResponse(_apiUrl + name);
-
-                if (!File.Exists(_dbFileName))
-                {
-                    CreateTable();
-                }
+                
+                CreateTable();
+                
                 if (response.Age > 0)
                 {
                     SaveDataToDatabase(response.Name, response.Age, response.Count);
